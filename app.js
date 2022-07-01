@@ -5,6 +5,12 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+// Server settings
+//const hostname = '0.0.0.0';
+const port = process.env.PORT || 8000;
+
+// Routing
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + "/home.html");
 });
@@ -18,6 +24,8 @@ app.get(sessionUrlPrefix + ':sessionId', (req, res) => {
   }
   res.sendFile(__dirname + "/game.html");
 });
+
+// Game Logic
 
 class Session {
   constructor(numPlayers, numRoundsToPlay, sessionId) {
@@ -151,6 +159,5 @@ function tryJoin(socket, sessionId) {
   session.addPlayer(socket);
 };
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
-});
+// --- main ---
+app.listen(port);
