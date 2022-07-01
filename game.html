@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div style="height:3em"></div>
+<div id="waitingDiv">
+  <div style="text-align:center">
+    <h2 id="waitingText">Loading...</h2>
+  </div>
+</div>
+<div id="game">
+  <div style="text-align:center">
+    <h2 id="words"></h2>
+    <form id="form" action="">
+      <input id="input" type="text"></input>
+    </form>
+  </div>
+</div>
+<div id="endScreen">
+  <div style="text-align:center">
+    <h2 id="endScreenText">Game Finished!</h2>
+    <p id="story" style="font-size:200%"></p>
+    <form id="nextForm" action="" hidden>
+      <input type="submit" value="Next Story"></input>
+    </form>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var endScreen = document.getElementById("endScreen");
+  endScreen.hidden = true;
+  var gameDiv = document.getElementById("game");
+  gameDiv.hidden = true;
+
+  var socket = io();
+
+  // session joining
+  var watitingText = document.getElementById("waitingText");
+  socket.on("session full", function() {
+    waitingText.textContent = "Session is Full :(";
+  });
+
+  socket.on("remaining spaces", function(num) {
+    waitingText.textContent = "Waiting for " + num.toString() + " other players...";
+  });
+
+  socket.on("start game", function() {
+    document.getElementById("waitingDiv").hidden = true;
+    gameDiv.hidden = false;
+  });
+
+  var finalStories;
+  socket.on("end game", function(stories) {
+    gameDiv.hidden = true;
+    endScreen.hidden = false;
+    finalStories = stories;
+    console.log("Final Stories: " + finalStories);
+  });
+
+  socket.on("next story", function() {
+    if (finalStories.length === 0) {
+      return
+    }
+    var endScreenText = document.getElementById("endScreenText");
+    endScreenText.hidden = true;
+
+    var story = document.getElementById("story");
+    story.innerHTML = finalStories.pop().join("<br>");
+  });
+
+  var nextForm = document.getElementById("nextForm");
+  nextForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    if (finalStories.length > 0) {
+      socket.emit("next story");
+    }
+  });
+
+  var url = window.location.href;
+  var sessionId = url.substring(url.lastIndexOf("/")+1);
+  socket.emit("try join", sessionId);
+
+  // actual game
+  var form = document.getElementById("form");
+  var input = document.getElementById("input");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    if (input.value && input.value.trim().split(" ").length == 3) {
+      socket.emit("message", input.value.trim());
+      input.disabled = true;
+      input.value = "";
+    }
+  });
+
+  var words = document.getElementById("words");
+  socket.on("message", function(msg) {
+    words.textContent = msg;
+    input.disabled = false;
+  });
+</script>
+
+</body>
+</html>

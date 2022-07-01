@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div style="height:3em"></div>
+
+<div style="text-align:center">
+	<h1>Three Word Game</h1>
+
+  <form id="optionForm" action="">
+    <p>How many people do you want to play with?</p>
+		<input id="playerNumInput" type="number" min="1"></input>
+    <p>How many rounds to you want to play?</p>
+		<input id="roundNumInput" type="number" min="1"></input>
+    <div style="margin-top:1em">
+      <input type="submit" value="Create Session">
+    </div>
+  </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+  // player selection
+  var optionForm = document.getElementById("optionForm");
+
+  optionForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    console.log("test");
+    var playerNumInput = document.getElementById("playerNumInput");
+    var roundNumInput = document.getElementById("roundNumInput");
+    if (playerNumInput.value && roundNumInput.value) {
+      socket.emit("new session",
+                  playerNumInput.value,
+                  roundNumInput.value);
+    }
+  });
+
+  socket.on("redirect", function(url) {
+    window.location.href = url;
+  });
+</script>
+
+</body>
+</html>
