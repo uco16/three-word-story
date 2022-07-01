@@ -1,0 +1,29 @@
+{
+  "name": "threewordstory",
+  "version": "1.0.0",
+  "description": "online story game",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.18",
+    "socket.io": "^4.5.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "devstart": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uco16/three-word-story.git"
+  },
+  "keywords": [
+    "stories", "online game"
+  ],
+  "author": "uco16",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uco16/three-word-stroy/issues"
+  },
+  "homepage": "https://github.com/uco16/three-word-story"
+}
