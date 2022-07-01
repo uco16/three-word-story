@@ -160,4 +160,6 @@ function tryJoin(socket, sessionId) {
 };
 
 // --- main ---
-app.listen(port);
+server.listen(port, () => {
+  console.log('listening on *:' + port);
+});
